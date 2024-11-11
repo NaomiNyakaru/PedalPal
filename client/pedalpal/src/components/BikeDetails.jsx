@@ -31,6 +31,7 @@ function BikeDetails({ userId, isLoggedIn }) {
         <p><strong>Description:</strong> {bike.description}</p>
         <p><strong>Frame Size:</strong> {bike.frameSize}</p>
         <p><strong>Wheel Size:</strong> {bike.wheelSize}</p>
+        <p><strong>Availabilty:</strong> {bike.availability}</p>
         <h3 className="bike-card-description"> $:{bike.price}</h3>
         <br />
         <button onClick={handleRent} className="btn2-rent">Rent Now</button>
