@@ -27,7 +27,7 @@ class UserResource(Resource):
         # 2. Encrypt our password
         hash = generate_password_hash(data['password']).decode('utf-8')
 
-         is_admin = data.get('is_admin', False)
+        is_admin = data.get('is_admin', False)
 
         # 3. Save the user to the db
         user = User(user_name=data['user_name'], phone_number=data['phone_number'], password = hash, email=data['email'],is_admin=is_admin)
