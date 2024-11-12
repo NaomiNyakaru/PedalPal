@@ -35,7 +35,7 @@ const Signup = ({ onSignup }) => {
       try {
         const response = await axios.post(`${serverURL}/users`, {
           user_name: values.name,
-          phone_number: values.phone,
+          phone_number: values.phone_number,
           email: values.email,
           password: values.password,
         });

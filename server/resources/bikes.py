@@ -17,6 +17,17 @@ class BikeResource(Resource):
     parser.add_argument('image_url',required=True,help="")
     parser.add_argument('available',type=bool,required=True,help="")
 
+
+    def get(self, bike_id=None):
+        if bike_id:
+            bike = Bike.query.get(bike_id)
+            if bike:
+                return bike.to_dict(), 200
+            return {"message": "Bike not found"}, 404
+        else:
+            bikes = Bike.query.all()
+            return [bike.to_dict() for bike in bikes], 200
+
     def post(self):
         data = self.parser.parse_args()
 

@@ -41,7 +41,7 @@ const SignIn = ({ onLogin }) => {
           // Regular user login
           const res = await axios.post(`${serverURL}/login`, values);
           console.log('User login successful:', res.data);
-          navigate('/bike/:id');
+          navigate('/bikes');
         }
       } catch (error) {
         console.error('Login failed:', error);

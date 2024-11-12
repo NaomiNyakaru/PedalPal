@@ -7,7 +7,7 @@ function BikesPage(){
     const [bikes,setBikes] = useState([])
     // Fetching the bikes data from the server
     useEffect(()=>{
-        fetch("https://json-server-vercel-lemon-nu.vercel.app/bikes")
+        fetch("https://pedalpal.onrender.com/bikes")
         .then((res) => res.json())
         .then((data)=> setBikes(data))
     },[])
