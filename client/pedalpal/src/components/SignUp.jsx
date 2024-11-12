@@ -2,10 +2,12 @@ import React from 'react';
 import { useFormik } from 'formik';
 import { useNavigate, Link } from 'react-router-dom';
 import * as Yup from 'yup';
+import axios from 'axios';
 import './signin_up.css';
 
 const Signup = ({ onSignup }) => {
   const navigate = useNavigate();
+  const serverURL = import.meta.env.VITE_SERVER_URL;
 
   const formik = useFormik({
     initialValues: {
@@ -31,20 +33,15 @@ const Signup = ({ onSignup }) => {
     }),
     onSubmit: async (values) => {
       try {
-        // Save user data to local storage
-        const users = JSON.parse(localStorage.getItem('users')) || [];
-        const newUser = { ...values };
-        users.push(newUser);
-        localStorage.setItem('users', JSON.stringify(users));
-
-        // Trigger onSignup callback passed as a prop
-        onSignup(newUser);
-
-        // Log successful submission
-        console.log('Signup successful, redirecting...');
+        const response = await axios.post(`${serverURL}/users`, {
+          user_name: values.name,
+          phone_number: values.phone,
+          email: values.email,
+          password: values.password,
+        });
         
         // Redirect to sign-in page after successful signup
-        navigate('/signin');
+        navigate('/login');
       } catch (error) {
         console.error('Signup error:', error);
         alert('There was an error during signup. Please try again.');
@@ -132,7 +129,7 @@ const Signup = ({ onSignup }) => {
         </button>
       </form>
       <p className="signup-login-link">
-        Already have an account? <Link to="/signin">Login</Link>
+        Already have an account? <Link to="/login">Login</Link>
       </p>
     </div>
   );

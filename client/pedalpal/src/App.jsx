@@ -35,7 +35,7 @@ function App() {
           <Route path="/bikes" element={<BikesPage />} />
           <Route path="/payments" element={<PaymentOptions />} />
           <Route path="/bike/:id" element={<BikeDetails/>} />
-          <Route path="/signin" element={<SignIn/>} />
+          <Route path="/login" element={<SignIn/>} />
           <Route path="/admin-dashboard" element={<Admin/>} />
         </Routes>
       </div>

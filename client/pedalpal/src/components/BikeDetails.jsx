@@ -9,7 +9,7 @@ function BikeDetails({ userId, isLoggedIn }) {
 
   const handleRent = () => {
     if (!isLoggedIn) {
-      navigate("/signin");
+      navigate("/login");
     } else {
       navigate("/payments");     
     }

@@ -2,17 +2,20 @@ import React, { useState } from "react";
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import './signin_up.css';
 
 const SignIn = ({ onLogin }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
+  const serverURL = import.meta.env.VITE_SERVER_URL;
 
-  // Admin credentials - in a real app, these would come from environment variables or backend
-  const ADMIN_CREDENTIALS = {
-    email: "admin@example.com",
-    password: "admin123"
-  };
+
+  // // Admin credentials - in a real app, these would come from environment variables or backend
+  // const ADMIN_CREDENTIALS = {
+  //   email: "admin@example.com",
+  //   password: "admin123"
+  // };
 
   const formik = useFormik({
     initialValues: {
@@ -26,58 +29,27 @@ const SignIn = ({ onLogin }) => {
       password: Yup.string()
         .required('Password is required'),
     }),
-    onSubmit: (values) => {
+    onSubmit:async (values) => {
       // Check if the credentials match admin
-      if (values.email === ADMIN_CREDENTIALS.email && 
-          values.password === ADMIN_CREDENTIALS.password) {
-        
-        // Handle admin login
-        const adminUser = {
-          email: values.email,
-          role: 'admin',
-          name: 'Admin',
-          isAdmin: true
-        };
-        
-        // Store admin session
-        sessionStorage.setItem('currentUser', JSON.stringify(adminUser));
-        setIsLoggedIn(true);
-        
-        // Redirect admin to admin dashboard
-        navigate('/admin-dashboard');
-        return;
-      }
-
-      // Check regular user credentials
-      const users = JSON.parse(localStorage.getItem('users')) || [];
-      const user = users.find(u => u.email === values.email && u.password === values.password);
-
-      if (user) {
-        // Add role information to user
-        const authenticatedUser = {
-          ...user,
-          role: 'user',
-          isAdmin: false
-        };
-        
-        // Store user session
-        sessionStorage.setItem('currentUser', JSON.stringify(authenticatedUser));
-        setIsLoggedIn(true);
-        
-        // Trigger login callback if provided
-        if (onLogin) {
-          onLogin(authenticatedUser);
+      try {
+        // Check if the credentials match an admin
+        if (values.username === 'admin' && values.password === 'adminpassword') {
+          const res = await axios.post(`${serverURL}/admin-dashboard`, values);
+          console.log('Admin login successful:', res.data);
+          navigate('/admin-dashboard');
+        } else {
+          // Regular user login
+          const res = await axios.post(`${serverURL}/login`, values);
+          console.log('User login successful:', res.data);
+          navigate('/bike/:id');
         }
-
-        // Redirect regular user to home page
-        navigate('/');
-      } else {
-        alert('Invalid email or password');
+      } catch (error) {
+        console.error('Login failed:', error);
+        setErrorMessage(error.response?.data?.message || 'Login failed! Please try again.');
       }
     },
-  });
-
-  return (
+ });
+ return (
     <div className="signup-container">
       <h2 className="signup-heading">Welcome back!</h2>
       <form onSubmit={formik.handleSubmit} className="signup-form">
