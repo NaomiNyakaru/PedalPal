@@ -27,7 +27,7 @@ const Admin = () => {
   const fetchBikes = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch("https://json-server-vercel-lemon-nu.vercel.app/bikes");
+      const response = await fetch("https://pedalpal.onrender.com/bikes");
       if (!response.ok) throw new Error('Failed to fetch bikes');
       const data = await response.json();
       setBikes(data);
@@ -40,7 +40,7 @@ const Admin = () => {
 
   const handleAddBike = async () => {
     try {
-      const response = await fetch("https://json-server-vercel-lemon-nu.vercel.app/bikes", {
+      const response = await fetch("https://pedalpal.onrender.com/bikes", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -71,7 +71,7 @@ const Admin = () => {
 
   const handleUpdateBike = async () => {
     try {
-      const response = await fetch(`https://json-server-vercel-lemon-nu.vercel.app/bikes/${editingBike.id}`, {
+      const response = await fetch(`https://pedalpal.onrender.com/bikes/${editingBike.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -94,7 +94,7 @@ const Admin = () => {
 
   const handleDeleteBike = async (bikeId) => {
     try {
-      const response = await fetch(`https://json-server-vercel-lemon-nu.vercel.app/bikes/${bikeId}`, {
+      const response = await fetch(`https://pedalpal.onrender.com/bikes/${bikeId}`, {
         method: "DELETE",
       });
 

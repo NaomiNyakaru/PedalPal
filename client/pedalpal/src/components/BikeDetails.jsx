@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState,useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import RatingReview from "./RatingReview";
+import { AuthContext } from "./AuthContext";
 
-function BikeDetails({ userId, isLoggedIn }) {
+function BikeDetails({ userId}) {
   const [rating, setRating] = useState(0);
   const navigate = useNavigate();
+  const { isLoggedIn } = useContext(AuthContext);
   const bike = useLocation().state.bike;
 
   const handleRent = () => {
@@ -27,12 +29,12 @@ function BikeDetails({ userId, isLoggedIn }) {
       </div>
       <div className="bike2-info">
         <p><strong>Model :</strong> {bike.model}</p>
-        <p><strong>Terrain:</strong> {bike.type}</p>
+        <p><strong>Terrain:</strong> {bike.terrain}</p>
         <p><strong>Description:</strong> {bike.description}</p>
-        <p><strong>Frame Size:</strong> {bike.frameSize}</p>
-        <p><strong>Wheel Size:</strong> {bike.wheelSize}</p>
+        <p><strong>Frame Size:</strong> {bike.frame_size}</p>
+        <p><strong>Wheel Size:</strong> {bike.wheel_size}</p>
         <p><strong>Availabilty:</strong> {bike.availability}</p>
-        <h3 className="bike-card-description"> $:{bike.price}</h3>
+        <h3 className="bike-card-description"> $:{bike.rent_price}</h3>
         <br />
         <button onClick={handleRent} className="btn2-rent">Rent Now</button>
         <br />

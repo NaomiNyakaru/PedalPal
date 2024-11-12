@@ -33,7 +33,7 @@ const Navbar = ({ isLoggedIn, handleLogout }) => {
             <button onClick={handleLogout} className="button-link"><CiLogout /></button>
           </li>
         ) : (
-          <li><Link to="/signin"><CiLogin /></Link></li>
+          <li><Link to="/login"><CiLogin /></Link></li>
         )}
       </ul>
 
