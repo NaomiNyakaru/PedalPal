@@ -101,32 +101,33 @@ class UserResource(Resource):
 
 class LoginResource(Resource):
     parser = reqparse.RequestParser()
-    parser.add_argument('email', required=True, help="email")
+    parser.add_argument('email', required=True, help="Email is required")
     parser.add_argument('password', required=True, help="Password is required")
 
     def post(self):
+        # Parse the incoming JSON data
         data = self.parser.parse_args()
 
-        # 1. retrieve the user using the unique field
-        user = User.query.filter_by(email = data['email']).first()
+        # 1. Retrieve the user using the unique field
+        user = User.query.filter_by(email=data['email']).first()
 
-        if user == None:
-            return {
-                "message": "Invalid email/password"
-            }, 401
+        # If user does not exist, return an error message
+        if user is None:
+            return jsonify({
+                "message": "Invalid email or password"
+            }), 401
 
-        # if password matches, everything is ok
+        # If password matches, generate JWT
         if check_password_hash(user.password, data['password']):
-            # generate jwt
-            access_token = create_access_token(identity = user.id)
+            access_token = create_access_token(identity=user.id)
 
-            return {
+            return jsonify({
                 "message": "Login successful",
-                "user": user.to_dict(),
+                "user": user.to_dict(),  # Ensure you have a method to serialize the user
                 "access_token": access_token,
-                "is_admin": user.is_admin 
-            }
+                "is_admin": user.is_admin
+            }), 200
         else:
-            return {
-                "message": "email/password"
-            }, 401
+            return jsonify({
+                "message": "Invalid email or password"
+            }), 401

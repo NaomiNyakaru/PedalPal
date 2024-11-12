@@ -1,4 +1,5 @@
 from app import app
+from flask_bcrypt import generate_password_hash
 from models import db, User, Bike, Rating, Rental, Payment
 from datetime import datetime, timedelta
 import random
@@ -16,7 +17,7 @@ def seed_database():
         user_name="admin",
         email="admin@bikerental.com",
         phone_number="000-000-0000",
-        password="adminpassword123",
+        password=generate_password_hash("adminpassword123"),
         is_admin=True  
     )
     db.session.add(admin)
