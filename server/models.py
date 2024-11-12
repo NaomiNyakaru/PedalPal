@@ -5,6 +5,8 @@ from sqlalchemy_serializer import SerializerMixin
 
 metadata = MetaData()
 
+bcrypt = Bcrypt()
+
 db = SQLAlchemy(metadata = metadata)
 
 class User(db.Model,SerializerMixin):
