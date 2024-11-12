@@ -19,7 +19,7 @@ class UserResource(Resource):
                 return user.to_dict(), 200
             return {"message": "User not found"}, 404
         else:
-            userss = User.query.all()
+            users = User.query.all()
             return [user.to_dict() for user in users], 200
 
     # create user method
