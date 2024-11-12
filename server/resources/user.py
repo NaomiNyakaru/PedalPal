@@ -11,6 +11,17 @@ class UserResource(Resource):
     parser.add_argument('email', required = True, help='Email is required')
     parser.add_argument('password', required=True, help='password is required')
     parser.add_argument('is_admin', type=bool, required=False, help='Admin status (default is False)')
+
+    def get(self, user_id=None):
+        if user_id:
+            user = User.query.get(user_id)
+            if user:
+                return user.to_dict(), 200
+            return {"message": "User not found"}, 404
+        else:
+            userss = User.query.all()
+            return [user.to_dict() for user in users], 200
+
     # create user method
     def post(self):
         data = self.parser.parse_args()
