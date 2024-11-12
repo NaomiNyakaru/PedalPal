@@ -1,4 +1,5 @@
 from sqlalchemy import MetaData
+from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy_serializer import SerializerMixin
 
@@ -23,10 +24,10 @@ class User(db.Model,SerializerMixin):
     serialize_rules = ('-ratings.user', '-rentals')
 
     def set_password(self, password):
-        self.password = generate_password_hash(password)
+        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
 
     def check_password(self, password):
-        return check_password_hash(self.password, password)
+        return bcrypt.check_password_hash(self.password, password)
 
 class Bike(db.Model,SerializerMixin):
     __tablename__ = 'bikes'
