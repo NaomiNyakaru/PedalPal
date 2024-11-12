@@ -10,7 +10,7 @@ class UserResource(Resource):
     parser.add_argument('phone_number', required = True, help='Phone Number is required')
     parser.add_argument('email', required = True, help='Email is required')
     parser.add_argument('password', required=True, help='password is required')
-     parser.add_argument('is_admin', type=bool, required=False, help='Admin status (default is False)')
+    parser.add_argument('is_admin', type=bool, required=False, help='Admin status (default is False)')
     # create user method
     def post(self):
         data = self.parser.parse_args()
