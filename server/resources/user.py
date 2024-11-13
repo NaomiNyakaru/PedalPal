@@ -26,10 +26,11 @@ class UserResource(Resource):
 
     # create user method
     def post(self):
+    # Notice the corrected indentation from here
         data = self.parser.parse_args()
         print(data)
 
-    # 1. Verify phone is unique
+        # 1. Verify phone is unique
         email = User.query.filter_by(email = data['email']).first()
 
         if email:
@@ -40,23 +41,29 @@ class UserResource(Resource):
         # 2. Encrypt our password
         hash = generate_password_hash(data['password']).decode('utf-8')
 
-       
+        is_admin = data.get('is_admin', False) or False
+
         # 3. Save the user to the db
-        user = User(user_name=data['user_name'], phone_number=data['phone_number'], password = hash, email=data['email'],is_admin=is_admin)
+        user = User(
+            user_name=data['user_name'],
+            phone_number=data['phone_number'],
+            password=hash,
+            email=data['email'],
+            is_admin=is_admin  # Using the is_admin variable we defined above
+        )
 
         db.session.add(user)
-
         db.session.commit()
 
         # 4. generate jwt and send it to react
-        access_token = create_access_token(identity = user.id)
+        access_token = create_access_token(identity=user.id)
 
         return {
             "message": "User created successfully",
             "user": user.to_dict(),
             "access_token": access_token
         }
-
+        
     @jwt_required()
     def put(self):
         # Update user profile
