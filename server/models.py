@@ -17,7 +17,6 @@ class User(db.Model,SerializerMixin):
     email = db.Column(db.String(100), nullable = False, unique=True)
     phone_number = db.Column(db.String(12))
     password = db.Column(db.String(128), nullable=False)
-    is_admin = db.Column(db.Boolean, default=False)
 
     #relationships
     ratings = db.relationship('Rating', backref='user', lazy=True)
