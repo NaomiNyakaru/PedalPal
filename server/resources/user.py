@@ -1,3 +1,4 @@
+from flask import jsonify, request
 from flask_restful import Resource, reqparse
 from flask_bcrypt import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, jwt_required,get_jwt_identity
@@ -112,20 +113,19 @@ class LoginResource(Resource):
 
         # If user does not exist, return an error message
         if user is None:
-            return jsonify({
+            return {
                 "message": "Invalid email or password"
-            }), 401
+            }, 401
 
         # If password matches, generate JWT
         if check_password_hash(user.password, data['password']):
             access_token = create_access_token(identity=user.id)
-
-            return jsonify({
+            return {
                 "message": "Login successful",
-                "user": user.to_dict(),  # Ensure you have a method to serialize the user
+                "user": user.to_dict(),
                 "access_token": access_token
-            }), 200
+            }, 200
         else:
-            return jsonify({
+            return {
                 "message": "Invalid email or password"
-            }), 401
+            }, 401
