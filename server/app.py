@@ -14,6 +14,7 @@ from resources.bikes import BikeResource
 from resources.ratings import RatingResource
 from resources.payment import PaymentResource
 from resources.rental import RentalResource
+from resources.admin import AdminResource
 
 load_dotenv()
 
@@ -46,6 +47,7 @@ api.add_resource(Index, '/')
 api.add_resource(UserResource,'/users')
 api.add_resource(LoginResource,'/login')
 api.add_resource(BikeResource,'/bikes','/bike/<id>')
+api.add_resource(AdminResource,'/admin-dashboard')
 api.add_resource(RatingResource,'/rating')
 api.add_resource(PaymentResource,'/payments')
 api.add_resource(RentalResource,'/rentals','/rental/<id>')
