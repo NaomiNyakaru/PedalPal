@@ -1,5 +1,5 @@
 from sqlalchemy import MetaData
-from flask_bcrypt import Bcrypt
+from flask_bcrypt import Bcrypt,generate_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy_serializer import SerializerMixin
 
@@ -18,6 +18,15 @@ class User(db.Model,SerializerMixin):
     phone_number = db.Column(db.String(12))
     password = db.Column(db.String(128), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
+
+    def set_password(self, password):
+        self.password = generate_password_hash(password)
+        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
+        return bcrypt.check_password_hash(self.password, password)
+
 
     #relationships
     ratings = db.relationship('Rating', backref='user', lazy=True)
