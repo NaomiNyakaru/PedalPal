@@ -11,6 +11,7 @@ class UserResource(Resource):
     parser.add_argument('phone_number', required = True, help='Phone Number is required')
     parser.add_argument('email', required = True, help='Email is required')
     parser.add_argument('password', required=True, help='password is required')
+    parser.add_argument('is_admin', type=bool, required=False, help='Admin status (default is False)')
    
 
     def get(self, user_id=None):
@@ -41,7 +42,7 @@ class UserResource(Resource):
 
        
         # 3. Save the user to the db
-        user = User(user_name=data['user_name'], phone_number=data['phone_number'], password = hash, email=data['email'])
+        user = User(user_name=data['user_name'], phone_number=data['phone_number'], password = hash, email=data['email'],is_admin=is_admin)
 
         db.session.add(user)
 
@@ -123,6 +124,7 @@ class LoginResource(Resource):
             return {
                 "message": "Login successful",
                 "user": user.to_dict(),
+                "is_admin": user.is_admin,
                 "access_token": access_token
             }, 200
         else:
