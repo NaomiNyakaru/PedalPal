@@ -25,7 +25,7 @@ class AdminResource(Resource):
             bikes = Bike.query.all()
             return [bike.to_dict() for bike in bikes], 200
 
-    def post(self):
+    def post(self, id=None):  # Add id parameter with default None
         data = self.parser.parse_args()
         bike = Bike(**data)
         db.session.add(bike)

@@ -51,16 +51,19 @@ class Bike(db.Model,SerializerMixin):
     #relationships
     ratings = db.relationship('Rating', backref='bike', lazy=True)
     rentals = db.relationship('Rental', backref='bike', lazy=True, cascade="all, delete-orphan")
+    
 
     serialize_rules = ('-ratings.bike', '-rentals')
 
 class Payment(db.Model,SerializerMixin):
     __tablename__ = 'payments'
+
     id = db.Column(db.Integer, primary_key=True)
     payment_method = db.Column(db.String(50))
     amount = db.Column(db.Integer,nullable=False)
-    bike_id = db.Column(db.Integer, db.ForeignKey('bikes.id'))
-    rental_id = db.Column(db.Integer, db.ForeignKey('rentals.id'), nullable=False)
+    bike_id = db.Column(db.Integer, db.ForeignKey('bikes.id', ondelete='CASCADE'))
+    rental_id = db.Column(db.Integer, db.ForeignKey('rentals.id'))
+
     
     serialize_rules = ('-rental.payment','-bike.payment')
 
