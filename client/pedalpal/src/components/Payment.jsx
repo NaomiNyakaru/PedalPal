@@ -1,157 +1,109 @@
 import React, { useState } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import './payment.css';
 
-
-// Creating dummy data for payment methods
-const paymentMethods = [
-  { id: 1, name: 'Visa', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-kIqA-9wBxUDDSp5W_P3xPIGxnTJJst3iMA&s' },
-  { id: 2, name: 'MasterCard', image: 'https://media.wired.com/photos/5926dea77034dc5f91bece36/master/w_1600%2Cc_limit/Mastercard3-1.jpg' },
-  { id: 3, name: 'PayPal', image: 'https://facts.net/wp-content/uploads/2023/09/15-facts-about-paypal-1694962132.jpg' },
-  { id: 4, name: 'Google Pay', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPjjSw-Gs99PAXujWKSCi-cLFFCpVM79SPGg&s' }
-];
-
-const PaymentOptions = () => {
-  const [selectedMethod, setSelectedMethod] = useState(null);
-  const [duration, setDuration] = useState('');
-  const [location, setLocation] = useState('');
-  const [cardDetails, setCardDetails] = useState({
-    cardNumber: '',
-    expirationDate: '',
-    cvv: ''
-  });
-
-  const handleSelect = (method) => {
-    setSelectedMethod(method);
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setCardDetails(prevDetails => ({
-      ...prevDetails,
-      [name]: value
-    }));
-  };
+const PaymentPage = () => {
+  const [duration, setDuration] = useState(1); // Default to 1 hour
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [hourlyRate, setHourlyRate] = useState('standard'); // 'standard' or 'premium'
   const navigate = useNavigate();
+  const serverURL = import.meta.env.VITE_SERVER_URL;
 
+  // Define hourly rates
+  const rates = {
+    standard: 1, // KSH 1 per hour
+    premium: 2,  // KSH 2 per hour
+  };
 
- const notify = () => {
-  toast.success(`Booking confirmed for ${duration} hours at ${location} using ${selectedMethod}.`, {
-    position: "top-center",
-    autoClose: 5000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-    theme: "dark",
-    onClose: () => navigate('/bikes'),
-  });
-}
+  const calculateTotal = () => {
+    return (rates[hourlyRate] * duration).toFixed(2);
+  };
 
+  const handleRateChange = (e) => {
+    setHourlyRate(e.target.value);
+  };
+
+  const handleDurationChange = (e) => {
+    const value = Math.max(1, parseInt(e.target.value) || 1); // Ensure minimum 1 hour
+    setDuration(value);
+  };
+
+  const handlePhoneNumberChange = (e) => {
+    setPhoneNumber(e.target.value);
+  };
+
+  const handlePayment = async () => {
+    const amount = calculateTotal();
+    try {
+      const response = await axios.post(`${serverURL}/initiate-payment`, {
+        amount,
+        phone_number: phoneNumber,
+        hours: duration,
+        rate_type: hourlyRate
+      });
+
+      if (response.status === 200) {
+        alert('Payment prompt sent to your phone. Please check and enter your PIN.');
+        navigate('/signin');
+      } else {
+        alert('Payment failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Payment error:', error);
+      alert('There was an issue with your payment. Please try again.');
+    }
+  };
 
   return (
-    
-    <div className="payment-options">
-      
-      <h2>Select Your Payment Method</h2>
-      
-      <div className="booking-details">
-        <label>
-          Duration (in hours):
-          <input 
-            type="number" 
-            value={duration} 
-            onChange={(e) => setDuration(e.target.value)} 
-            placeholder="Enter duration"
+    <div className="payment-page">
+      <h2>Choose Your Rate</h2>
+      <div className="plan-options">
+        <label className="plan-option">
+          <input
+            type="radio"
+            name="rate"
+            value="standard"
+            checked={hourlyRate === 'standard'}
+            onChange={handleRateChange}
           />
-        </label>
-
-        <label>
-          Location:
-          <input 
-            type="text" 
-            value={location} 
-            onChange={(e) => setLocation(e.target.value)} 
-            placeholder="Enter location"
-          />
-        </label>
-      </div>
-
-      <div className="payment-grid">
-
-        {paymentMethods.map((method) => (
-          <div
-            key={method.id}
-            className={`payment-card ${selectedMethod === method.name ? 'selected' : ''}`}
-            onClick={() => handleSelect(method.name)}
-          >
-            <img src={method.image} alt={method.name} className="payment-image" />
-            <p>{method.name}</p>
-          </div>
-        ))}
-      </div>
-
-      {selectedMethod && (
-        <div className="payment-summary">
-          <h3>Enter Payment Details</h3>
-         
-          {selectedMethod !== 'PayPal' && selectedMethod !== 'Google Pay' && (
-            <>
-              <label>
-                Card Number:
-                <input 
-                  type="text" 
-                  name="cardNumber" 
-                  value={cardDetails.cardNumber} 
-                  onChange={handleInputChange} 
-                  placeholder="1234 5678 9012 3456"
-                />
-              </label>
-
-              <label>
-                Expiration Date:
-                <input 
-                  type="text" 
-                  name="expirationDate" 
-                  value={cardDetails.expirationDate} 
-                  onChange={handleInputChange} 
-                  placeholder="MM/YY"
-                />
-              </label>
-
-              <label>
-                CVV:
-                <input 
-                  type="text" 
-                  name="cvv" 
-                  value={cardDetails.cvv} 
-                  onChange={handleInputChange} 
-                  placeholder="123"
-                />
-              </label>
-            </>
-          )}
+          <span>Standard Rate</span>
           
-          <button className="btn" onClick={() => notify()}>Proceed to Payment</button>
-          <ToastContainer 
-              position="top-center"
-              autoClose={5000}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              theme="dark"
-            />
-         
-        </div>
-      )}
+          <span className="plan-price"> KSH {rates.standard}/hour</span>
+        </label>
+        
+      </div>
+
+      <div className="duration-input">
+        <label>
+          Duration (hours):
+          <input
+            type="number"
+            min="1"
+            value={duration}
+            onChange={handleDurationChange}
+            className="duration-field"
+          />
+        </label>
+      </div>
+
+      <div className="total-amount">
+        Total Amount: KSH {calculateTotal()}
+      </div>
+
+      <input
+        type="text"
+        className="phone-input"
+        placeholder="Enter phone number..."
+        value={phoneNumber}
+        onChange={handlePhoneNumberChange}
+      />
+
+      <button className="pay-button" onClick={handlePayment}>
+        PAY
+      </button>
     </div>
   );
 };
 
-export default PaymentOptions;
+export default PaymentPage;

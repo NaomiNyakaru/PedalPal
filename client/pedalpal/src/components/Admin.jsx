@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './Admin.css';
 
 const Admin = () => {
   const [bikes, setBikes] = useState([]);
@@ -11,13 +12,13 @@ const Admin = () => {
   const [newBike, setNewBike] = useState({
     name: "",
     model: "",
-    type: "",
+    terrain: "",
     description: "",
-    frameSize: "",
-    wheelSize: "",
-    price: "",
+    frame_size: "",
+    wheel_size: "",
+    rent_price: "",
     image_url: "",
-    status: "available"
+    available: true
   });
 
   useEffect(() => {
@@ -27,7 +28,7 @@ const Admin = () => {
   const fetchBikes = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch("https://pedalpal.onrender.com/bikes");
+      const response = await fetch("https://pedalpal.onrender.com/admin-dashboard");
       if (!response.ok) throw new Error('Failed to fetch bikes');
       const data = await response.json();
       setBikes(data);
@@ -38,30 +39,37 @@ const Admin = () => {
     }
   };
 
-  const handleAddBike = async () => {
+  const handleAddBike = async (e) => {
+    e.preventDefault();
     try {
-      const response = await fetch("https://pedalpal.onrender.com/bikes", {
+      const response = await fetch("https://pedalpal.onrender.com/admin-dashboard", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(newBike),
+        body: JSON.stringify({
+          ...newBike,
+          rent_price: parseFloat(newBike.rent_price)
+        }),
       });
 
-      if (!response.ok) throw new Error('Failed to add bike');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to add bike');
+      }
       
-      const addedBike = await response.json();
-      setBikes([...bikes, addedBike]);
+      const data = await response.json();
+      setBikes([...bikes, data.bike]); // Update to access the bike from the response
       setNewBike({
         name: "",
         model: "",
-        type: "",
+        terrain: "",
         description: "",
-        frameSize: "",
-        wheelSize: "",
-        price: "",
+        frame_size: "",
+        wheel_size: "",
+        rent_price: "",
         image_url: "",
-        status: "available"
+        available: true
       });
       setShowAddDialog(false);
     } catch (err) {
@@ -69,9 +77,10 @@ const Admin = () => {
     }
   };
 
-  const handleUpdateBike = async () => {
+  const handleUpdateBike = async (e) => {
+    e.preventDefault();
     try {
-      const response = await fetch(`https://pedalpal.onrender.com/bikes/${editingBike.id}`, {
+      const response = await fetch(`https://pedalpal.onrender.com/admin-dashboard/${editingBike.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -79,7 +88,10 @@ const Admin = () => {
         body: JSON.stringify(editingBike),
       });
 
-      if (!response.ok) throw new Error('Failed to update bike');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update bike');
+      }
 
       const updatedBike = await response.json();
       setBikes(bikes.map(bike => 
@@ -94,11 +106,14 @@ const Admin = () => {
 
   const handleDeleteBike = async (bikeId) => {
     try {
-      const response = await fetch(`https://pedalpal.onrender.com/bikes/${bikeId}`, {
+      const response = await fetch(`https://pedalpal.onrender.com/admin-dashboard/${bikeId}`,{
         method: "DELETE",
       });
 
-      if (!response.ok) throw new Error('Failed to delete bike');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to delete bike');
+      }
       
       setBikes(bikes.filter(bike => bike.id !== bikeId));
     } catch (err) {
@@ -131,74 +146,101 @@ const Admin = () => {
               <h2>Add New Bike</h2>
               <button className="close-btn" onClick={() => setShowAddDialog(false)}>&times;</button>
             </div>
-            <div className="modal-content">
+            <form onSubmit={handleAddBike} className="modal-content">
               <div className="form-group">
-                <label>Name</label>
+                <label htmlFor="name">Name</label>
                 <input
+                  id="name"
                   type="text"
                   value={newBike.name}
                   onChange={(e) => setNewBike({ ...newBike, name: e.target.value })}
+                  required
                 />
               </div>
               <div className="form-group">
-                <label>Model</label>
+                <label htmlFor="model">Model</label>
                 <input
+                  id="model"
                   type="text"
                   value={newBike.model}
                   onChange={(e) => setNewBike({ ...newBike, model: e.target.value })}
+                  required
                 />
               </div>
               <div className="form-group">
-                <label>Terrain Type</label>
+                <label htmlFor="terrain">Terrain Type</label>
                 <input
+                  id="terrain"
                   type="text"
-                  value={newBike.type}
-                  onChange={(e) => setNewBike({ ...newBike, type: e.target.value })}
+                  value={newBike.terrain}
+                  onChange={(e) => setNewBike({ ...newBike, terrain: e.target.value })}
+                  required
                 />
               </div>
               <div className="form-group">
-                <label>Description</label>
+                <label htmlFor="description">Description</label>
                 <textarea
+                  id="description"
                   value={newBike.description}
                   onChange={(e) => setNewBike({ ...newBike, description: e.target.value })}
+                  required
                 />
               </div>
               <div className="form-row">
                 <div className="form-group">
-                  <label>Frame Size</label>
+                  <label htmlFor="frame_size">Frame Size</label>
                   <input
+                    id="frame_size"
                     type="text"
-                    value={newBike.frameSize}
-                    onChange={(e) => setNewBike({ ...newBike, frameSize: e.target.value })}
+                    value={newBike.frame_size}
+                    onChange={(e) => setNewBike({ ...newBike, frame_size: e.target.value })}
+                    required
                   />
                 </div>
                 <div className="form-group">
-                  <label>Wheel Size</label>
+                  <label htmlFor="wheel_size">Wheel Size</label>
                   <input
+                    id="wheel_size"
                     type="text"
-                    value={newBike.wheelSize}
-                    onChange={(e) => setNewBike({ ...newBike, wheelSize: e.target.value })}
+                    value={newBike.wheel_size}
+                    onChange={(e) => setNewBike({ ...newBike, wheel_size: e.target.value })}
+                    required
                   />
                 </div>
               </div>
               <div className="form-group">
-                <label>Price</label>
+                <label htmlFor="rent_price">Price</label>
                 <input
+                  id="rent_price"
                   type="number"
-                  value={newBike.price}
-                  onChange={(e) => setNewBike({ ...newBike, price: e.target.value })}
+                  value={newBike.rent_price}
+                  onChange={(e) => setNewBike({ ...newBike, rent_price: e.target.value })}
+                  required
                 />
               </div>
               <div className="form-group">
-                <label>Image URL</label>
+                <label htmlFor="image_url">Image URL</label>
                 <input
+                  id="image_url"
                   type="text"
                   value={newBike.image_url}
                   onChange={(e) => setNewBike({ ...newBike, image_url: e.target.value })}
+                  required
                 />
               </div>
-              <button className="btn submit-btn" onClick={handleAddBike}>Add Bike</button>
-            </div>
+              <div className="form-group">
+                <label htmlFor="available">Available</label>
+                <select
+                  id="available"
+                  value={newBike.available}
+                  onChange={(e) => setNewBike({ ...newBike, available: e.target.value === 'true' })}
+                >
+                  <option value="true">Yes</option>
+                  <option value="false">No</option>
+                </select>
+              </div>
+              <button type="submit" className="btn submit-btn">Add Bike</button>
+            </form>
           </div>
         </div>
       )}
@@ -234,12 +276,12 @@ const Admin = () => {
               />
               <div className="bike-details">
                 <p><strong>Model:</strong> {bike.model}</p>
-                <p><strong>Type:</strong> {bike.type}</p>
-                <p><strong>Price:</strong> ${bike.price}</p>
+                <p><strong>Terrain:</strong> {bike.terrain}</p>
+                <p><strong>Price:</strong> ${bike.rent_price}</p>
                 <p>
                   <strong>Status:</strong>
-                  <span className={`status-badge ${bike.status === 'available' ? 'available' : 'unavailable'}`}>
-                    {bike.status || 'available'}
+                  <span className={`status-badge ${bike.available ? 'available' : 'unavailable'}`}>
+                    {bike.available ? 'Available' : 'Not Available'}
                   </span>
                 </p>
               </div>
@@ -258,264 +300,41 @@ const Admin = () => {
                 setEditingBike(null);
               }}>&times;</button>
             </div>
-            <div className="modal-content">
+            <form onSubmit={handleUpdateBike} className="modal-content">
               <div className="form-group">
-                <label>Name</label>
+                <label htmlFor="edit-name">Name</label>
                 <input
+                  id="edit-name"
                   type="text"
                   value={editingBike.name}
                   onChange={(e) => setEditingBike({
                     ...editingBike,
                     name: e.target.value,
                   })}
+                  required
                 />
               </div>
               <div className="form-group">
-                <label>Status</label>
+                <label htmlFor="edit-available">Status</label>
                 <select
-                  value={editingBike.status || 'available'}
+                  id="edit-available"
+                  value={editingBike.available}
                   onChange={(e) => setEditingBike({
                     ...editingBike,
-                    status: e.target.value,
+                    available: e.target.value === 'true',
                   })}
                 >
-                  <option value="available">Available</option>
-                  <option value="not available">Not Available</option>
-                  <option value="maintenance">Under Maintenance</option>
+                  <option value="true">Available</option>
+                  <option value="false">Not Available</option>
                 </select>
               </div>
-              <button className="btn submit-btn" onClick={handleUpdateBike}>
+              <button type="submit" className="btn submit-btn">
                 Save Changes
               </button>
-            </div>
+            </form>
           </div>
         </div>
       )}
-
-      <style jsx>{`
-        .admin-container {
-          padding: 1.5rem;
-          max-width: 1280px;
-          margin: 0 auto;
-        }
-
-        .header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 1.5rem;
-        }
-
-        h1 {
-          font-size: 1.875rem;
-          font-weight: bold;
-        }
-
-        .btn {
-          padding: 0.5rem 1rem;
-          border: none;
-          border-radius: 0.375rem;
-          cursor: pointer;
-          font-weight: 500;
-          transition: background-color 0.2s;
-        }
-
-        .add-btn {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          background-color: #3b82f6;
-          color: white;
-        }
-
-        .add-btn:hover {
-          background-color: #2563eb;
-        }
-
-        .icon {
-          font-size: 1.25rem;
-        }
-
-        .bike-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-          gap: 1.5rem;
-        }
-
-        .bike-card {
-          border: 1px solid #e5e7eb;
-          border-radius: 0.5rem;
-          overflow: hidden;
-          background-color: white;
-        }
-
-        .bike-header {
-          padding: 1rem;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          border-bottom: 1px solid #e5e7eb;
-        }
-
-        .action-buttons {
-          display: flex;
-          gap: 0.5rem;
-        }
-
-        .icon-btn {
-          background: none;
-          border: none;
-          cursor: pointer;
-          font-size: 1.25rem;
-          padding: 0.25rem;
-          border-radius: 0.25rem;
-        }
-
-        .icon-btn:hover {
-          background-color: #f3f4f6;
-        }
-
-        .edit-btn {
-          color: #4b5563;
-        }
-
-        .delete-btn {
-          color: #ef4444;
-        }
-
-        .bike-content {
-          padding: 1rem;
-        }
-
-        .bike-image {
-          width: 100%;
-          height: 12rem;
-          object-fit: cover;
-          border-radius: 0.375rem;
-          margin-bottom: 1rem;
-        }
-
-        .bike-details {
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
-        }
-
-        .status-badge {
-          margin-left: 0.5rem;
-          padding: 0.25rem 0.5rem;
-          border-radius: 0.25rem;
-          font-size: 0.875rem;
-        }
-
-        .available {
-          background-color: #dcfce7;
-          color: #166534;
-        }
-
-        .unavailable {
-          background-color: #fee2e2;
-          color: #991b1b;
-        }
-
-        .modal-overlay {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background-color: rgba(0, 0, 0, 0.5);
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          z-index: 1000;
-        }
-
-        .modal {
-          background-color: white;
-          border-radius: 0.5rem;
-          width: 90%;
-          max-width: 500px;
-          max-height: 90vh;
-          overflow-y: auto;
-        }
-
-        .modal-header {
-          padding: 1rem;
-          border-bottom: 1px solid #e5e7eb;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
-
-        .close-btn {
-          background: none;
-          border: none;
-          font-size: 1.5rem;
-          cursor: pointer;
-          color: #6b7280;
-        }
-
-        .modal-content {
-          padding: 1rem;
-        }
-
-        .form-group {
-          margin-bottom: 1rem;
-        }
-
-        .form-row {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 1rem;
-        }
-
-        label {
-          display: block;
-          margin-bottom: 0.5rem;
-          font-weight: 500;
-        }
-
-        input, textarea, select {
-          width: 100%;
-          padding: 0.5rem;
-          border: 1px solid #d1d5db;
-          border-radius: 0.375rem;
-          font-size: 1rem;
-        }
-
-        textarea {
-          min-height: 100px;
-          resize: vertical;
-        }
-
-        .submit-btn {
-          background-color: #3b82f6;
-          color: white;
-          width: 100%;
-          margin-top: 1rem;
-        }
-
-        .submit-btn:hover {
-          background-color: #2563eb;
-        }
-
-        .loading {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          height: 100vh;
-        }
-
-        .error {
-          display: flex;
-          justify-content: center;
-           align-items: center;
-          color: #ef4444;
-          font-size: 1.25rem;
-          height: 100vh;
-        }
-      `}</style>
     </div>
   );
 };

@@ -63,7 +63,9 @@ class Payment(db.Model,SerializerMixin):
     amount = db.Column(db.Integer,nullable=False)
     bike_id = db.Column(db.Integer, db.ForeignKey('bikes.id', ondelete='CASCADE'))
     rental_id = db.Column(db.Integer, db.ForeignKey('rentals.id'))
-
+    phone_number = db.Column(db.String(15), nullable=False)
+    reference_code = db.Column(db.String(100), unique=True)  # Added this field
+    payment_status = db.Column(db.String(20), default='pending')
     
     serialize_rules = ('-rental.payment','-bike.payment')
 

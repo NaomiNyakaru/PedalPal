@@ -16,19 +16,25 @@ body {
   max-width: 100%;
 }
 
-.ui.grid > .row.bike-army-row {
-  flex-wrap: nowrap;
-  min-height: 100%;
+.ui.four.column.grid {
+  display: flex;
+  flex-wrap: wrap; /* Ensure items wrap if there are too many */
 }
 
-.ui.grid {
-  padding: 0px 20px;
+.ui.grid > .row {
+  padding-top: 50px;
+  display: flex; /* Use flexbox for row */
+  justify-content: space-between; /* Space out the items evenly */
+  flex-wrap: wrap; /* Allow wrapping if needed */
+  gap: 20px; /* Add some space between items */
 }
+
 .ui .column {
-  margin: 0;
-  padding: 0;
-
+  flex: 0 0 20%;  /* Each column should take up 21% of the width, adjust as needed */
+  margin: 0; /* Ensure there's no additional margin */
+  padding: 0; /* Remove padding from columns */
 }
+
 
 /* Navbar Styling */
 
@@ -485,5 +491,94 @@ body {
 .btn2-rent:hover {
   background-color: #0056b3;
 }
+
+.admin-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.btn {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.add-btn {
+  background-color: #28a745;
+  color: white;
+}
+
+.bike-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.bike-card {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  overflow: hidden;
+  text-align: center;
+  background-color: #fff;
+}
+
+.bike-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+.bike-card h3 {
+  margin: 10px 0;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 400px;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
 
 

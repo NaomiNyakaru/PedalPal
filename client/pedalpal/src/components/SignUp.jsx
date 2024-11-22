@@ -5,6 +5,9 @@ import * as Yup from 'yup';
 import axios from 'axios';
 import './signin_up.css';
 
+// Import toast and ToastContainer from react-toastify
+import { toast } from 'react-toastify';  
+
 const Signup = ({ onSignup }) => {
   const navigate = useNavigate();
   const serverURL = import.meta.env.VITE_SERVER_URL;
@@ -40,18 +43,38 @@ const Signup = ({ onSignup }) => {
           password: values.password,
         });
         
+        // Show success toast
+        toast.success('Signup successful! Please log in.', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+
         // Redirect to sign-in page after successful signup
         navigate('/login');
       } catch (error) {
         console.error('Signup error:', error);
-        alert('There was an error during signup. Please try again.');
+
+        // Show error toast
+        toast.error('There was an error during signup. Please try again.', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       }
     },
   });
 
   return (
     <div className="signup-container">
-      
       <form onSubmit={formik.handleSubmit} className="signup-form">
         
         <input
@@ -67,7 +90,6 @@ const Signup = ({ onSignup }) => {
           <div className="signup-error">{formik.errors.name}</div>
         )}
 
-        
         <input
           type="email"
           id="email"
@@ -81,7 +103,6 @@ const Signup = ({ onSignup }) => {
           <div className="signup-error">{formik.errors.email}</div>
         )}
 
-        
         <input
           type="tel"
           id="phone_number"
@@ -95,7 +116,6 @@ const Signup = ({ onSignup }) => {
           <div className="signup-error">{formik.errors.phone_number}</div>
         )}
 
-       
         <input
           type="password"
           id="password"
@@ -108,7 +128,6 @@ const Signup = ({ onSignup }) => {
         {formik.touched.password && formik.errors.password && (
           <div className="signup-error">{formik.errors.password}</div>
         )}
-
 
         <button
           type="submit"

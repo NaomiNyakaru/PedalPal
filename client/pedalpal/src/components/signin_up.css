@@ -88,3 +88,23 @@ body {
     color: red;
     font-size: 12px;
   }
+
+  .notification {
+    background-color: #28a745;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    text-align: center;
+    font-weight: bold;
+    transition: opacity 0.3s ease;
+  }
+  
+  .notification.success {
+    background-color: #28a745; /* Green */
+  }
+  
+  .notification.error {
+    background-color: #dc3545; /* Red */
+  }
+  

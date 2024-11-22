@@ -5,6 +5,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './signin_up.css';
 import { AuthContext } from './AuthContext';
+import { toast } from 'react-toastify';  // Import toast
+
+// Import styles for react-toastify
+import 'react-toastify/dist/ReactToastify.css';
 
 const SignIn = () => {
   const [errorMessage, setErrorMessage] = useState('');
@@ -32,15 +36,18 @@ const SignIn = () => {
         // Check if the returned user is an admin based on the backend response
         if (userData.is_admin) {
           console.log('Admin login successful:', userData);
+          toast.success('Admin login successful!');  // Success toast
           navigate('/admin-dashboard');
         } else {
           console.log('User login successful:', userData);
           login();  // Assuming login function updates the AuthContext
+          toast.success('User login successful!');  // Success toast
           navigate('/bikes');
         }
       } catch (error) {
         console.error('Login failed:', error.response || error.message);
         setErrorMessage(error.response?.data?.message || 'Login failed! Please try again.');
+        toast.error('Login failed! Please try again.');  // Error toast
       }
     }
   });

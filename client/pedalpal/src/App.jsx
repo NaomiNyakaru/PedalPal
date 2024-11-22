@@ -10,7 +10,10 @@ import Signup from './components/SignUp';
 import BikeDetails from './components/BikeDetails';
 import Admin from './components/Admin';
 
-
+// Import ToastContainer from react-toastify
+import { ToastContainer } from 'react-toastify';  
+import 'react-toastify/dist/ReactToastify.css';  // Import Toastify CSS
+import OrganizerPage from './components/events';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -29,22 +32,23 @@ function App() {
 
   return (
     <Router>
-       <AuthProvider>
-       <div className='App'>
-        <NavBar isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
-        <Routes>
-        <Route path="/signup" element={<Signup onSignup={handleSignup} />} />
-          <Route path="/" element={<Home />} />
-          <Route path="/bikes" element={<BikesPage />} />
-          <Route path="/payments" element={<PaymentOptions />} />
-          <Route path="/bike/:id" element={<BikeDetails/>} />
-          <Route path="/login" element={<SignIn/>} />
-          <Route path="/admin-dashboard" element={<Admin/>} />
-          
-        </Routes>
-      </div>
-       </AuthProvider>
-      
+      <AuthProvider>
+        <div className='App'>
+          <NavBar isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
+          <Routes>
+            <Route path="/signup" element={<Signup onSignup={handleSignup} />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/bikes" element={<BikesPage />} />
+            <Route path="/payments" element={<PaymentOptions />} />
+            <Route path="/bike/:id" element={<BikeDetails />} />
+            <Route path="/login" element={<SignIn />} />
+            <Route path="/admin-dashboard" element={<Admin />} />
+            <Route path="/events" element={<OrganizerPage/>}/>
+          </Routes>
+        </div>
+        {/* Add ToastContainer here to render toasts */}
+        <ToastContainer />
+      </AuthProvider>
     </Router>
   );
 }

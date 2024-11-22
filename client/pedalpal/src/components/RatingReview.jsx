@@ -7,7 +7,7 @@ function RatingReview({ bikeId, userId }) {
     
     const fetchRating = async () => {
       try {
-        const response = await fetch(`https://json-server-vercel-lemon-nu.vercel.app/ratings?user=${userId}&bikeId=${bikeId}`);
+        const response = await fetch(`https://pedalpal.onrender.com/rating/${userId}&bikeId=${bikeId}`);
         const data = await response.json();
 
         if (data.length > 0) {
@@ -33,12 +33,12 @@ function RatingReview({ bikeId, userId }) {
 
    
     try {
-      const response = await fetch(`https://json-server-vercel-lemon-nu.vercel.app/ratings?user=${userId}&bikeId=${bikeId}`);
+      const response = await fetch(`https://pedalpal.onrender.com/rating/${userId}&bikeId=${bikeId}`);
       const data = await response.json();
 
       if (data.length > 0) {
         
-        await fetch(`https://json-server-vercel-lemon-nu.vercel.app/ratings/${data[0].id}`, {
+        await fetch(`https://pedalpal.onrender.com/rating/${data[0].id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -47,7 +47,7 @@ function RatingReview({ bikeId, userId }) {
         });
       } else {
         
-        await fetch(`https://json-server-vercel-lemon-nu.vercel.app/ratings`, {
+        await fetch(`https://pedalpal.onrender.com/rating`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
