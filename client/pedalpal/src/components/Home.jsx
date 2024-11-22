@@ -6,8 +6,8 @@ const Home = () => {
     <div>
       <header className="hero">
         <div className="hero-content">
-          <h1>Rent the Best Bikes in Town</h1>
-          <p>Two wheels, endless possibilities. Cycling : where the journey is just as important as the destination. Feel the wind in your face and the freedom of the open road.</p>
+          <h1 className='homepage'>Rent the Best Bikes in Town</h1>
+          <p className='homepage'>Two wheels, endless possibilities. Cycling : where the journey is just as important as the destination. Feel the wind in your face and the freedom of the open road.</p>
           <a href="/bikes" className="btn">Browse Bikes</a>
         </div>
       </header>

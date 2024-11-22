@@ -133,7 +133,7 @@ const Signup = ({ onSignup }) => {
           type="submit"
           style={{
             marginTop: '15px',
-            backgroundColor: '#ff5733',
+            backgroundColor: '#009647',
             color: 'white',
             border: 'none',
             padding: '10px',

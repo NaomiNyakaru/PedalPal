@@ -3,17 +3,18 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './payment.css';
 
+
 const PaymentPage = () => {
-  const [duration, setDuration] = useState(1); // Default to 1 hour
+  const [duration, setDuration] = useState(1);
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [hourlyRate, setHourlyRate] = useState('standard'); // 'standard' or 'premium'
+  const [hourlyRate, setHourlyRate] = useState('standard');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
   const serverURL = import.meta.env.VITE_SERVER_URL;
 
-  // Define hourly rates
   const rates = {
-    standard: 1, // KSH 1 per hour
-    premium: 2,  // KSH 2 per hour
+    standard: 20, // KSH 1 per hour
   };
 
   const calculateTotal = () => {
@@ -25,39 +26,115 @@ const PaymentPage = () => {
   };
 
   const handleDurationChange = (e) => {
-    const value = Math.max(1, parseInt(e.target.value) || 1); // Ensure minimum 1 hour
+    const value = Math.max(1, parseInt(e.target.value) || 1);
     setDuration(value);
   };
 
+  const formatPhoneNumber = (number) => {
+    // Remove any non-digit characters
+    let cleaned = number.replace(/\D/g, '');
+    
+    // If number starts with 0, replace with 254
+    if (cleaned.startsWith('0')) {
+      cleaned = '254' + cleaned.slice(1);
+    }
+    
+    // If number starts with +, replace with empty string
+    if (cleaned.startsWith('+')) {
+      cleaned = cleaned.slice(1);
+    }
+    
+    // If number doesn't start with 254, add it
+    if (!cleaned.startsWith('254')) {
+      cleaned = '254' + cleaned;
+    }
+    
+    return cleaned;
+  };
+
   const handlePhoneNumberChange = (e) => {
-    setPhoneNumber(e.target.value);
+    const value = e.target.value;
+    setPhoneNumber(value);
+  };
+
+  const validatePhoneNumber = (number) => {
+    const cleaned = formatPhoneNumber(number);
+    const phoneRegex = /^254[17][0-9]{8}$/;
+    return phoneRegex.test(cleaned);
   };
 
   const handlePayment = async () => {
-    const amount = calculateTotal();
     try {
-      const response = await axios.post(`${serverURL}/initiate-payment`, {
+      setError('');
+      setIsLoading(true);
+
+      // Validate phone number
+      if (!phoneNumber) {
+        setError('Please enter a phone number');
+        return;
+      }
+
+      const formattedPhone = formatPhoneNumber(phoneNumber);
+      
+      if (!validatePhoneNumber(formattedPhone)) {
+        setError('Please enter a valid Safaricom phone number');
+        return;
+      }
+
+      const amount = calculateTotal();
+      
+      if (amount <= 0) {
+        setError('Amount must be greater than 0');
+        return;
+      }
+
+      console.log('Sending payment request:', {
         amount,
-        phone_number: phoneNumber,
+        phone_number: formattedPhone,
         hours: duration,
         rate_type: hourlyRate
       });
 
-      if (response.status === 200) {
-        alert('Payment prompt sent to your phone. Please check and enter your PIN.');
-        navigate('/signin');
+      const response = await axios.post(`${serverURL}/initiate-payment`, {
+        amount: parseInt(amount),
+        phone_number: formattedPhone,
+        hours: duration,
+        rate_type: hourlyRate
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      console.log('Payment response:', response.data);
+
+      if (response.data.success || response.data.ResponseCode === "0") {
+        alert('Please check your phone for the M-PESA payment prompt and enter your PIN');
+        
+        // Optional: Poll for payment status
+        // startPollingPaymentStatus(response.data.CheckoutRequestID);
+        
+        // For now, we'll just navigate after alert
+        setTimeout(() => {
+          navigate('/payment-success');
+        }, 3000);
       } else {
-        alert('Payment failed. Please try again.');
+        setError(response.data.error || 'Payment initiation failed. Please try again.');
       }
     } catch (error) {
       console.error('Payment error:', error);
-      alert('There was an issue with your payment. Please try again.');
+      setError(error.response?.data?.error || error.message || 'Payment failed. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="payment-page">
       <h2>Choose Your Rate</h2>
+      
+      {error && <div className="error-message">{error}</div>}
+      
       <div className="plan-options">
         <label className="plan-option">
           <input
@@ -68,10 +145,8 @@ const PaymentPage = () => {
             onChange={handleRateChange}
           />
           <span>Standard Rate</span>
-          
-          <span className="plan-price"> KSH {rates.standard}/hour</span>
+          <span className="plan-price">KSH {rates.standard}/hour</span>
         </label>
-        
       </div>
 
       <div className="duration-input">
@@ -91,16 +166,26 @@ const PaymentPage = () => {
         Total Amount: KSH {calculateTotal()}
       </div>
 
-      <input
-        type="text"
-        className="phone-input"
-        placeholder="Enter phone number..."
-        value={phoneNumber}
-        onChange={handlePhoneNumberChange}
-      />
+      <div className="phone-input-container">
+        <label>
+          M-PESA Phone Number:
+          <input
+            type="tel"
+            className="phone-input"
+            placeholder="e.g., 0712345678"
+            value={phoneNumber}
+            onChange={handlePhoneNumberChange}
+          />
+        </label>
+        <small>Enter your Safaricom number in format: 0712345678</small>
+      </div>
 
-      <button className="pay-button" onClick={handlePayment}>
-        PAY
+      <button 
+        className="pay-button" 
+        onClick={handlePayment}
+        disabled={isLoading}
+      >
+        {isLoading ? 'Processing...' : 'Pay with M-PESA'}
       </button>
     </div>
   );

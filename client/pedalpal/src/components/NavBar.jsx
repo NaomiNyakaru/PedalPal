@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaHome } from "react-icons/fa";
-import { CiLogin,CiLogout } from "react-icons/ci";
+import { CiLogin, CiLogout } from "react-icons/ci";
 import { GiDutchBike } from "react-icons/gi";
 import logo from '../assets/LOGO.jpeg';
 
 const Navbar = ({ isLoggedIn, handleLogout }) => {
   const [darkMode, setDarkMode] = useState(false);
-  
 
   useEffect(() => {
     const storedMode = localStorage.getItem('darkMode');
@@ -15,8 +14,6 @@ const Navbar = ({ isLoggedIn, handleLogout }) => {
       setDarkMode(true);
     }
   }, []);
-
-
 
   return (
     <nav className={`navbar ${darkMode ? 'dark' : 'light'}`}>
@@ -26,17 +23,20 @@ const Navbar = ({ isLoggedIn, handleLogout }) => {
         <p>For whenever you're wheely-tired</p>
       </div>
       <ul className="navbar-links">
-        <li><Link to="/"><FaHome /></Link></li>
-        <li><Link to="/bikes"><GiDutchBike /></Link></li>
+        <li><Link to="/"><FaHome style={{ fontSize: '24px' }} /></Link></li>
+        <li><Link to="/bikes"><GiDutchBike style={{ fontSize: '24px' }} /></Link></li>
         {isLoggedIn ? (
           <li>
-            <button onClick={handleLogout} className="button-link"><CiLogout /></button>
+            <button onClick={handleLogout} className="button-link">
+              <CiLogout style={{ fontSize: '24px' }} /> Logout
+            </button>
           </li>
         ) : (
-          <li><Link to="/login"><CiLogin /></Link></li>
+          <li><Link to="/login">
+            <CiLogin style={{ fontSize: '24px' }} /> 
+          </Link></li>
         )}
       </ul>
-
     </nav>
   );
 };

@@ -9,6 +9,8 @@ import SignIn from './components/SignIn';
 import Signup from './components/SignUp';
 import BikeDetails from './components/BikeDetails';
 import Admin from './components/Admin';
+import PaymentSuccess from './components/paymentsuccess';
+
 
 // Import ToastContainer from react-toastify
 import { ToastContainer } from 'react-toastify';  
@@ -44,6 +46,7 @@ function App() {
             <Route path="/login" element={<SignIn />} />
             <Route path="/admin-dashboard" element={<Admin />} />
             <Route path="/events" element={<OrganizerPage/>}/>
+            <Route path="/payment-success" element={<PaymentSuccess/>}/>
           </Routes>
         </div>
         {/* Add ToastContainer here to render toasts */}

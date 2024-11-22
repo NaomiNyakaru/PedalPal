@@ -16,7 +16,6 @@ const Admin = () => {
     description: "",
     frame_size: "",
     wheel_size: "",
-    rent_price: "",
     image_url: "",
     available: true
   });
@@ -67,7 +66,6 @@ const Admin = () => {
         description: "",
         frame_size: "",
         wheel_size: "",
-        rent_price: "",
         image_url: "",
         available: true
       });

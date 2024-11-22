@@ -22,14 +22,17 @@ body {
 }
 
 .ui.grid > .row {
-  padding-top: 50px;
+  padding-left: 40px;
+  padding-right: 40px;
+  padding-top: 30px;
   display: flex; /* Use flexbox for row */
   justify-content: space-between; /* Space out the items evenly */
   flex-wrap: wrap; /* Allow wrapping if needed */
-  gap: 20px; /* Add some space between items */
+  gap: 140px; /* Add some space between items */
 }
 
 .ui .column {
+
   flex: 0 0 20%;  /* Each column should take up 21% of the width, adjust as needed */
   margin: 0; /* Ensure there's no additional margin */
   padding: 0; /* Remove padding from columns */
@@ -169,7 +172,7 @@ body {
 }
 
 .btn:hover {
-  background-color: #c74428;
+  background-color: #ff5733;
 }
 
 .categories {
@@ -479,7 +482,7 @@ body {
 .btn2-rent {
   display: inline-block;
   padding: 10px 20px;
-  background-color: #007bff;
+  background-color: #009647;
   color: white;
   text-align: center;
   text-decoration: none;
@@ -489,7 +492,7 @@ body {
 }
 
 .btn2-rent:hover {
-  background-color: #0056b3;
+  background-color: lightgreen;
 }
 
 .admin-container {
@@ -580,5 +583,27 @@ button:hover {
   opacity: 0.9;
 }
 
+.availability-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
 
+.availability-indicator.available {
+  color: #16a34a; /* green color */
+}
 
+.availability-indicator.unavailable {
+  color: #dc2626; /* red color */
+}
+
+/* Optional: Style for the dot */
+.availability-indicator::before {
+  content: "●";
+  margin-right: 4px;
+  font-size: 12px;
+}
+
+.homepage{
+  color:white
+}

@@ -2,6 +2,9 @@ import React, { useState,useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import RatingReview from "./RatingReview";
 import { AuthContext } from "./AuthContext";
+import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
+
 
 function BikeDetails({ userId}) {
   const [rating, setRating] = useState(0);
@@ -9,13 +12,16 @@ function BikeDetails({ userId}) {
   const { isLoggedIn } = useContext(AuthContext);
   const bike = useLocation().state.bike;
 
-  const handleRent = () => {
-    if (!isLoggedIn) {
-      navigate("/login");
-    } else {
-      navigate("/payments");     
-    }
-  };
+  
+const handleRent = () => {
+  if (!isLoggedIn) {
+    navigate("/login");
+  } else if (bike.available) {
+    navigate("/payments");
+  } else {
+    toast.error("Sorry, this bike is currently unavailable for rent.");
+  }
+};
 
   return (
     <div className="bike2-details-container">
@@ -33,10 +39,22 @@ function BikeDetails({ userId}) {
         <p><strong>Description:</strong> {bike.description}</p>
         <p><strong>Frame Size:</strong> {bike.frame_size}</p>
         <p><strong>Wheel Size:</strong> {bike.wheel_size}</p>
-        <p><strong>Availabilty:</strong> {bike.availability}</p>
-        <h3 className="bike-card-description"> $:{bike.rent_price}</h3>
+        <p>
+        <strong>Availability:</strong>{" "}
+        <span className={`availability-indicator ${bike.available ? "available" : "unavailable"}`}>
+          {bike.available ? "●" : "●"}{" "}
+          {bike.available ? "Available" : "Not Available"}
+        </span>
+      </p>
+
         <br />
-        <button onClick={handleRent} className="btn2-rent">Rent Now</button>
+        <button
+          disabled={!bike.available} 
+          onClick={handleRent}
+          className={`btn2-rent ${bike.available ? "" : "disabled"}`} 
+        >
+          Rent Now
+        </button>
         <br />
         <br />
         <a href="/bikes" className="btn">Back</a>
