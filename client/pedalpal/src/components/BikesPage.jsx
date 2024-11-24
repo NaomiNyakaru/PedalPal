@@ -5,9 +5,11 @@ import BikeCollection from "./BikeCollection";
 
 function BikesPage(){
     const [bikes,setBikes] = useState([])
+    const serverURL = import.meta.env.VITE_SERVER_URL;
+
     // Fetching the bikes data from the server
     useEffect(()=>{
-        fetch("https://pedalpal.onrender.com/bikes")
+        fetch(`${serverURL}/bikes`)
         .then((res) => res.json())
         .then((data)=> setBikes(data))
     },[])
