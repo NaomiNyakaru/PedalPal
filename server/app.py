@@ -28,7 +28,7 @@ CALLBACK_URL = "http://your-server-url.com/payment/callback"  # Update this
 LIPA_NA_MPESA_URL = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "https://pedalpal-1.onrender.com/"}})
 api = Api(app)
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
